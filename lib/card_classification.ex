@@ -19,10 +19,16 @@ defmodule Poker.CardClassification do
   }
 
   @doc """
-   partial_order_of_card/1 deteermines the partial order of a hand
+   partial_order_of_hand/1 determines the partial order of a hand
+
+   ## Examples
+      
+      iex> Poker.CardClassification.partial_order_of_hand("2C 3H 4S 8C KH")
+      "High Card"
+
   """
-  @spec partial_order_of_card(String.t()) :: String.t()
-  def partial_order_of_card(hand) do
+  @spec partial_order_of_hand(String.t()) :: String.t()
+  def partial_order_of_hand(hand) do
     hand
     |> values_and_suits_of_cards()
     |> classify()
@@ -30,6 +36,11 @@ defmodule Poker.CardClassification do
 
   @doc """
   values_and_suits_of_cards/1 returns a list containg the suits and values of the cards that make up the hand
+
+  ## Examples
+      iex> Poker.CardClassification.values_and_suits_of_cards("2H 3D 5S 9C KD")
+      {["H", "D", "S", "C", "D"], ["2", "3", "5", "9", "K"]}
+
   """
   @spec values_and_suits_of_cards(String.t()) :: tuple()
   def values_and_suits_of_cards(hand) do
@@ -40,6 +51,25 @@ defmodule Poker.CardClassification do
     end)
     |> Enum.reduce({[], []}, fn card, {suits, values} ->
       {List.insert_at(suits, -1, card.suit), List.insert_at(values, -1, card.value)}
+    end)
+  end
+
+  @doc """
+  integer_values/1 returns a list of values in integer form
+
+  ## Examples
+      iex> Poker.CardClassification.integer_values(["2", "3", "5", "Q", "K"])
+      [2, 3, 5, 12, 13]
+
+  """
+  @spec integer_values(list()) :: list()
+  def integer_values(values) do
+    Enum.map(values, fn value ->
+      if is_integer(value) do
+        value
+      else
+        @card_value[value]
+      end
     end)
   end
 
@@ -86,9 +116,5 @@ defmodule Poker.CardClassification do
 
   defp consecutive_values(values) do
     integer_values(values) == Enum.min(values)..Enum.max(values) |> Enum.to_list()
-  end
-
-  def integer_values(values) do
-    Enum.map(values, fn value -> @card_value[value] end)
   end
 end
