@@ -88,7 +88,7 @@ defmodule Poker.CardClassification do
     integer_values(values) == Enum.min(values)..Enum.max(values) |> Enum.to_list()
   end
 
-  defp integer_values(values) do
+  def integer_values(values) do
     Enum.map(values, fn value -> @card_value[value] end)
   end
 end
