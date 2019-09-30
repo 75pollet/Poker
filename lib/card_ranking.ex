@@ -18,23 +18,27 @@ defmodule Poker.CardRanking do
   """
   @spec rank_hands(String.t(), String.t()) :: String.t()
   def rank_hands(black, white) do
-    {b_partial_order, b_value} = partial_order_and_value(black)
-    {w_partial_order, w_value} = partial_order_and_value(white)
-
     if tie?(black, white) do
       "Tie"
     else
-      if compare_hands(b_value, w_value, b_partial_order, w_partial_order) ==
-           "values are the same" do
-        rank_hands_with_next_value(
-          black,
-          white,
-          {b_partial_order, b_value},
-          {w_partial_order, w_value}
-        )
-      else
-        compare_hands(b_value, w_value, b_partial_order, w_partial_order)
-      end
+      proceed_with_ranking(black, white)
+    end
+  end
+
+  defp proceed_with_ranking(black, white) do
+    {b_partial_order, b_value} = partial_order_and_value(black)
+    {w_partial_order, w_value} = partial_order_and_value(white)
+
+    if compare_hands(b_value, w_value, b_partial_order, w_partial_order) ==
+         "values are the same" do
+      rank_hands_with_next_value(
+        black,
+        white,
+        {b_partial_order, b_value},
+        {w_partial_order, w_value}
+      )
+    else
+      compare_hands(b_value, w_value, b_partial_order, w_partial_order)
     end
   end
 
