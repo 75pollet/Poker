@@ -29,17 +29,28 @@ defmodule Poker.CardRanking do
     {b_partial_order, b_value} = partial_order_and_value(black)
     {w_partial_order, w_value} = partial_order_and_value(white)
 
-    if compare_hands(b_value, w_value, b_partial_order, w_partial_order) ==
-         "values are the same" do
-      rank_hands_with_next_value(
-        black,
-        white,
-        {b_partial_order, b_value},
-        {w_partial_order, w_value}
-      )
-    else
-      compare_hands(b_value, w_value, b_partial_order, w_partial_order)
-    end
+    b_value
+    |> compare_hands(w_value, b_partial_order, w_partial_order)
+    |> proceed_with_ranking(black, white, {b_partial_order, b_value}, {w_partial_order, w_value})
+  end
+
+  defp proceed_with_ranking(
+         "values are the same",
+         black,
+         white,
+         {b_partial_order, b_value},
+         {w_partial_order, w_value}
+       ) do
+    rank_hands_with_next_value(
+      black,
+      white,
+      {b_partial_order, b_value},
+      {w_partial_order, w_value}
+    )
+  end
+
+  defp proceed_with_ranking(result, _, _, _, _) do
+    result
   end
 
   defp rank_hands_with_next_value(
